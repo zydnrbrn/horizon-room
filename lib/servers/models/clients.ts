@@ -1,21 +1,21 @@
 import { DataTypes, Model } from "sequelize";
-import { postgre } from "../db";
+import psql from "../config/db";
 
-class Client extends Model {
-    declare id: number;
+export class Clients extends Model {
+    declare id: string;
     declare name: string;
     declare email: string;
     declare phone: string;
     declare credit: number;
-    declare created_at: Date;
-    declare updated_at: Date;
+    declare createdAt: Date;
+    declare updatedAt: Date;
 }
 
-Client.init({
+Clients.init({
     id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true
+        type: DataTypes.UUID,
+        primaryKey: true,
+        defaultValue: DataTypes.UUIDV4,
     },
     name: {
         type: DataTypes.STRING,
@@ -25,6 +25,7 @@ Client.init({
         type: DataTypes.STRING,
         allowNull: false
     },
+
     phone: {
         type: DataTypes.STRING,
         allowNull: false
@@ -33,17 +34,15 @@ Client.init({
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    created_at: {
+    createdAt: {
         type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.NOW
+        defaultValue: new Date()
     },
-    updated_at: {
+    updatedAt: {
         type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.NOW
+        defaultValue: new Date()
     }
 }, {
-    sequelize: postgre,
+    sequelize: psql,
     modelName: 'clients'
-});
+})
