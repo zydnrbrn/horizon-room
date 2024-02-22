@@ -60,8 +60,8 @@ const ListRooms = ({ rooms }: ListRoomsProps) => {
         try {
             const formData = new FormData();
             formData.append('roomId', String(selectedRoom?.id));
-            formData.append('startTime', startDate);
-            formData.append('endTime', endDate);
+            formData.append('startTime', startDate.toDateString());
+            formData.append('endTime', endDate.toDateString());
 
             const response = await axios.post('/api/rooms/bookings', formData);
 
