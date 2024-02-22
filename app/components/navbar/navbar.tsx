@@ -1,78 +1,115 @@
 'use client'
 
-import React from "react";
-import { Navbar as NavbarUI, NavbarBrand, NavbarMenuToggle, NavbarMenuItem, NavbarMenu, NavbarContent, NavbarItem, Link, Button } from "@nextui-org/react";
-import Logo from '../logo/logo';
+import {
+    Box,
+    Flex,
+    Avatar,
+    HStack,
+    Text,
+    IconButton,
+    Button,
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem,
+    MenuDivider,
+    useDisclosure,
+    useColorModeValue,
+    Stack,
+} from '@chakra-ui/react'
+import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
+import Logo from '../logo/logo'
+import Link from 'next/link'
 
-export default function MainNavbar() {
-    const menuItems = [
-        "Home",
-        "Rooms",
-    ];
+interface Props {
+    children: React.ReactNode
+}
 
-    const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+const Links = [{
+    label: 'Home',
+    href: '/'
+},
+{
+    label: 'Rooms',
+    href: '/rooms'
+}];
+
+const NavLink = (props: Props) => {
+    const { children } = props
+
     return (
-        <NavbarUI
-            isBordered
-            isMenuOpen={isMenuOpen}
-            onMenuOpenChange={setIsMenuOpen}
-        >
-            <NavbarContent className="sm:hidden" justify="start">
-                <NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} />
-            </NavbarContent>
+        <Box
+            as="a"
+            px={2}
+            py={1}
+            rounded={'md'}
+            _hover={{
+                textDecoration: 'none',
+                bg: useColorModeValue('gray.200', 'gray.700'),
+            }}
+            href={'#'}>
+            {children}
+        </Box>
+    )
+}
 
-            <NavbarContent className="sm:hidden pr-3" justify="center">
-                <NavbarBrand>
-                    <Logo />
-                </NavbarBrand>
-            </NavbarContent>
+export default function Simple() {
+    const { isOpen, onOpen, onClose } = useDisclosure()
 
-            <NavbarContent className="hidden sm:flex gap-4" justify="center">
-                <NavbarBrand>
-                    <Logo />
-                </NavbarBrand>
-                {menuItems.map((item, index) => (
-                    <NavbarItem key={`${item}-${index}`}>
-                        <Link
-                            color={
-                                index === 2 ? "warning" : index === menuItems.length - 1 ? "danger" : "foreground"
-                            }
-                            href="#"
-                            size="lg"
-                        >
-                            {item}
-                        </Link>
-                    </NavbarItem>
-                ))}
-            </NavbarContent>
+    return (
+        <>
+            <Box px={4}>
+                <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
+                    <IconButton
+                        size={'md'}
+                        icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+                        aria-label={'Open Menu'}
+                        display={{ md: 'none' }}
+                        onClick={isOpen ? onClose : onOpen}
+                    />
+                    <HStack spacing={8} alignItems={'center'}>
+                        <Logo />
+                        <HStack as={'nav'} spacing={4} display={{ base: 'none', md: 'flex' }}>
+                            {Links.map((link) => (
+                                <Link href={link.href} key={link.label}>{link.label}</Link>
+                            ))}
+                        </HStack>
+                    </HStack>
+                    <Flex alignItems={'center'}>
+                        <Menu>
+                            <MenuButton
+                                as={Button}
+                                rounded={'full'}
+                                variant={'link'}
+                                cursor={'pointer'}
+                                minW={0}>
+                                <Avatar
+                                    size={'sm'}
+                                    src={
+                                        'https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9'
+                                    }
+                                />
+                            </MenuButton>
+                            <MenuList>
+                                <MenuItem>Link 1</MenuItem>
+                                <MenuItem>Link 2</MenuItem>
+                                <MenuDivider />
+                                <MenuItem>Link 3</MenuItem>
+                            </MenuList>
+                        </Menu>
+                    </Flex>
+                </Flex>
 
-            <NavbarContent justify="end">
-                <NavbarItem className="hidden lg:flex">
-                    <Link href="#">Login</Link>
-                </NavbarItem>
-                <NavbarItem>
-                    <Button as={Link} color="warning" href="#" variant="flat">
-                        Login
-                    </Button>
-                </NavbarItem>
-            </NavbarContent>
-
-            <NavbarMenu>
-                {menuItems.map((item, index) => (
-                    <NavbarMenuItem key={`${item}-${index}`}>
-                        <Link
-                            className="w-full"
-                            color={
-                                index === 2 ? "warning" : index === menuItems.length - 1 ? "danger" : "foreground"
-                            }
-                            href="#"
-                            size="lg"
-                        >
-                            {item}
-                        </Link>
-                    </NavbarMenuItem>
-                ))}
-            </NavbarMenu>
-        </NavbarUI>
+                {isOpen ? (
+                    <Box pb={4} display={{ md: 'none' }}>
+                        <Stack as={'nav'} spacing={4}>
+                            {Links.map((link) => (
+                                <Link href={link.href} key={link.label}>{link.label}</Link>
+                            ))}
+                        </Stack>
+                    </Box>
+                ) : null}
+            </Box>
+        </>
     )
 }

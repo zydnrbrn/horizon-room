@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize";
 
-const psql = new Sequelize('postgres://postgres:postgres@localhost:5432/db_horizon', {
+const dbUrl = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/db_horizon';
+const psql = new Sequelize(dbUrl, {
     dialect: 'postgres',
     dialectModule: require('pg')
 });

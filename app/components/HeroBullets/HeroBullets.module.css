@@ -1,0 +1,50 @@
+.inner {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 64px;
+    padding-bottom: 64px;
+}
+
+.content {
+    max-width: 480px;
+    margin-right: 48px;
+
+    @media (max-width: 960px) {
+        max-width: 100%;
+        margin-right: 0;
+    }
+}
+
+.title {
+    color: black;
+    font-family: Greycliff CF, sans-serif;
+    font-size: 44px;
+    line-height: 1.2;
+    font-weight: 900;
+
+    @media (max-width: 576px) {
+        font-size: 28px;
+    }
+}
+
+.control {
+    @media (max-width: 576px) {
+        flex: 1;
+    }
+}
+
+.image {
+    width: 376px;
+    height: 356px;
+
+    @media (max-width: 960px) {
+        display: none;
+    }
+}
+
+.highlight {
+    position: relative;
+    background-color: lightblue;
+    border-radius: 4px;
+    padding: 4px 12px;
+}
