@@ -1,7 +1,13 @@
 import { Sequelize } from "sequelize";
+const psqlHost = process.env.POSTGRES_HOST ?? 'localhost'
+const psqlPort = 5432
+const psqlUser = process.env.POSTGRES_USER ?? 'postgres'
+const psqlPassword = process.env.POSTGRES_PASSWORD
+const psqlDb = process.env.POSTGRES_DATABASE ?? 'postgres'
 
-const dbUrl = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/db_horizon';
-const psql = new Sequelize(dbUrl, {
+const psql = new Sequelize(psqlDb, psqlUser, psqlPassword, {
+    host: psqlHost,
+    port: psqlPort,
     dialect: 'postgres',
     dialectModule: require('pg')
 });
