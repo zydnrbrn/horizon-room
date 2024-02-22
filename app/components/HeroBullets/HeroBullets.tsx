@@ -10,6 +10,7 @@ import {
     Icon,
     IconProps,
 } from '@chakra-ui/react'
+import Link from 'next/link'
 
 const Illustration = (props: IconProps) => {
     return (
@@ -837,7 +838,7 @@ export default function CallToActionWithIllustration() {
                     fontSize={{ base: '3xl', sm: '4xl', md: '6xl' }}
                     lineHeight={'110%'}>
                     Meeting scheduling{' '}
-                    <Text as={'span'} color={'orange.400'}>
+                    <Text as={'span'} color={'red.500'}>
                         made easy
                     </Text>
                 </Heading>
@@ -846,10 +847,12 @@ export default function CallToActionWithIllustration() {
                 </Text>
                 <Stack spacing={6} direction={'row'}>
                     <Button
+                        as={Link}
+                        href={'/login'}
                         rounded={'full'}
                         px={6}
-                        colorScheme={'orange'}
-                        bg={'orange.400'}
+                        bg={'red.500'}
+                        color={'white'}
                         _hover={{ bg: 'orange.500' }}>
                         Get started
                     </Button>

@@ -1,8 +1,8 @@
 'use client'
-import React from 'react'
-import SplitWithImage from '../components/features/features'
-import CaptionCarousel from '../components/carousels/carousels'
+import React from 'react';
+import SplitWithImage from '../components/features/features';
 import ListRooms, { Room } from '../components/rooms/rooms';
+import { Skeleton } from '@chakra-ui/react';
 
 type RoomsResponse = {
     success: boolean;
@@ -29,9 +29,8 @@ function Page() {
 
     return (
         <div>
-            {/* <CaptionCarousel /> */}
             <SplitWithImage />
-            {rooms && <ListRooms rooms={rooms.data} />}
+            {rooms ? <ListRooms rooms={rooms.data} /> : <Skeleton borderRadius={10} height="800px" />}
         </div>
     )
 }

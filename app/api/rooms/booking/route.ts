@@ -1,4 +1,5 @@
 import { RoomUsages } from "@/lib/servers/models/roomUsages";
+import { Rooms } from "@/lib/servers/models/rooms";
 import { Users } from "@/lib/servers/models/users";
 
 export async function POST(request: Request) {
@@ -9,10 +10,14 @@ export async function POST(request: Request) {
         const startTime = formData.get('startTime');
         const endTime = formData.get('endTime');
         const bookingDate = formData.get('bookingDate');
-        const quotaUsed = Number(formData.get('quotaUsed'));
 
         const checkClient = await Users.findOne({ where: { id: clientId } });
-        const calculatedQuota = checkClient ? checkClient.credits - (quotaUsed || 0) : 0;
+        const checkRooms = await Rooms.findOne({ where: { id: roomId } });
+        if (!checkClient || !checkRooms) {
+            return Response.json({ success: false, message: 'Client or room not found' }, { status: 404 });
+        }
+        const roomCost = checkRooms?.get('costPerHour');
+        const calculatedQuota = checkClient ? checkClient.credits - (roomCost || 0) : 0;
         if (checkClient) {
             // Updating users credit, i directly call the update method from the model
             if (!await Users.update({ credits: calculatedQuota }, { where: { id: clientId } })) {
@@ -27,7 +32,7 @@ export async function POST(request: Request) {
             startTime: startTime,
             endTime: endTime,
             bookingDate: bookingDate,
-            quotaUsed: quotaUsed
+            quotaUsed: roomCost
         });
 
         return Response.json({ success: true, data: booking }, { status: 201 });

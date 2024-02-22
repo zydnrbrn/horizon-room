@@ -6,17 +6,25 @@ import {
     Stack,
     Text,
     Image,
-    VStack,
     Button,
     Heading,
     SimpleGrid,
     StackDivider,
-    useColorModeValue,
     List,
     ListItem,
     Flex,
+    useDisclosure,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalCloseButton,
+    ModalBody,
+    useToast,
 } from '@chakra-ui/react'
-import { MdLocalShipping } from 'react-icons/md'
+import { useState } from 'react';
+import { DatePicker, DatePickerInput } from '@carbon/react'
+import axios from 'axios';
 
 export type Room = {
     id: string;
@@ -30,7 +38,62 @@ type ListRoomsProps = {
     rooms: Room[];
 };
 
+type ModalBookingProps = {
+    roomName: string;
+};
+
+
 const ListRooms = ({ rooms }: ListRoomsProps) => {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState<Date>(new Date());
+    const toast = useToast();
+    const onChange = (dates: Date[]) => {
+        const [start, end] = dates;
+        setStartDate(start);
+        setEndDate(end);
+    };
+
+    const handleBooking = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        try {
+            const formData = new FormData();
+            formData.append('roomId', String(selectedRoom?.id));
+            formData.append('startTime', startDate);
+            formData.append('endTime', endDate);
+
+            const response = await axios.post('/api/rooms/bookings', formData);
+
+            if (response.status === 201) {
+                toast({
+                    title: 'Room booked successfully.',
+                    description: 'You have successfully booked the room.',
+                    status: 'success',
+                    duration: 9000,
+                    isClosable: true,
+                });
+                onClose();
+            }
+
+            toast({
+                title: 'An error occurred.',
+                description: 'Unable to book the room.',
+                status: 'error',
+                duration: 9000,
+                isClosable: true,
+            });
+        } catch (error) {
+            toast({
+                title: 'An error occurred.',
+                description: 'Unable to book the room.',
+                status: 'error',
+                duration: 9000,
+                isClosable: true,
+            });
+        }
+    }
+
     return (
         <Container maxW={'7xl'}>
             <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={{ base: 8, md: 10 }} py={{ base: 18, md: 24 }}>
@@ -87,12 +150,34 @@ const ListRooms = ({ rooms }: ListRoomsProps) => {
                             _hover={{
                                 transform: 'translateY(2px)',
                                 boxShadow: 'lg',
+                            }}
+                            onClick={() => {
+                                setSelectedRoom(room);
+                                onOpen();
                             }}>
                             Book Now
                         </Button>
                     </Stack>
                 ))}
             </SimpleGrid>
+            <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Booking {selectedRoom?.roomName}</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <form action="">
+                            <Text>Room Name: {selectedRoom?.roomName}</Text>
+                            <Text>Cost per hour: {selectedRoom?.costPerHour}</Text>
+                            <DatePicker datePickerType='range'>
+                                <DatePickerInput id="date-picker-input-id-start" placeholder="mm/dd/yyyy" labelText="Start date" size="md" />
+                                <DatePickerInput id="date-picker-input-id-finish" placeholder="mm/dd/yyyy" labelText="End date" size="md" />
+                            </DatePicker>
+                            <Button type="submit" colorScheme="blue" mt={4}>Save</Button>
+                        </form>
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
         </Container>
     );
 };

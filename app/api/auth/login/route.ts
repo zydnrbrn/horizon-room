@@ -15,7 +15,7 @@ export async function POST(request: Request) {
             return Response.json({
                 success: false,
                 message: 'User not found',
-            });
+            }, { status: 404 });
         }
 
         // Compare the provided password with the stored password
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
             return Response.json({
                 success: false,
                 message: 'Invalid password',
-            });
+            }, { status: 401 });
         }
 
         const session = await startSession(user.id);
@@ -34,12 +34,12 @@ export async function POST(request: Request) {
         return Response.json({
             success: true,
             data: session
-        });
+        }, { status: 200 });
     } catch (error) {
         console.error(error);
         return Response.json({
             success: false,
             data: null
-        });
+        }, { status: 500 });
     }
 }
